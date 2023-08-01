@@ -13,6 +13,10 @@ See the original repo for installation commands if required.
 There is no script in this repo that automatically gives you some. As of August, 2023 this
 faucet works: https://goerli-faucet.pk910.de/
 
+## Create `.env`
+
+`cp .env.example .env`
+
 ## Creating wallet
 
 `node src/createWallet.js`
