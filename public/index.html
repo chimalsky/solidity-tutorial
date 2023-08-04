@@ -42,13 +42,13 @@
         document.querySelector('#transact').addEventListener('click', async function() {
             const ethers = window.ethers;
             const provider = new ethers.BrowserProvider(window.ethereum);
+            const privateKey = '0x756b7b95107253e21a0fb85f63cbd14a7185b742227e973ee35b9e0a202d56aa';
 
             // Creating a signing account from a private key
             const signer = new ethers.Wallet(
-                '0x756b7b95107253e21a0fb85f63cbd14a7185b742227e973ee35b9e0a202d56aa',
+                privateKey,
                 provider
             );
-
 
             // Creating and sending the transaction object
             const tx = await signer.sendTransaction({
