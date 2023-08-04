@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Ethers.js in Browser</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.6.7/ethers.umd.min.js" type="application/javascript"></script>
+</head>
+<body>
+    <button id="connectButton">Connect Wallet</button>
+    <div id="status">Disconnected</div>
+
+    <button id="transact">Send Transaction</button>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const ethers = window.ethers;
+
+            const button = document.getElementById('connectButton');
+            const status = document.getElementById('status');
+
+            async function connectWallet() {
+                if (typeof window.ethereum !== 'undefined') {
+                    try {
+                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        const provider = new ethers.BrowserProvider(window.ethereum);
+                        const signer = await provider.getSigner();
+                        const balance = await provider.getBalance(accounts[0]);
+                        console.log(accounts, provider, signer, balance);
+                        status.innerText = `Connected: ${accounts[0]}\nBalance: ${ethers.formatEther(balance)} ETH`;
+                    } catch (err) {
+                        console.log(err);
+                        status.innerText = `Error: ${err.message}`;
+                    }
+                } else {
+                    status.innerText = 'MetaMask not found';
+                }
+            }
+
+            button.addEventListener('click', connectWallet);
+        });
+
+        document.querySelector('#transact').addEventListener('click', async function() {
+            const ethers = window.ethers;
+            const provider = new ethers.BrowserProvider(window.ethereum);
+
+            // Creating a signing account from a private key
+            const signer = new ethers.Wallet(
+                '0x756b7b95107253e21a0fb85f63cbd14a7185b742227e973ee35b9e0a202d56aa',
+                provider
+            );
+
+
+            // Creating and sending the transaction object
+            const tx = await signer.sendTransaction({
+                to: '0x3E04c0E3E5a09b3419B425C8EAE917baa738F6eF',
+                value: ethers.parseUnits("0.001", "ether"),
+            });
+            console.log("Mining transaction...");
+            console.log(`https://goerli.etherscan.io/tx/${tx.hash}`);
+            // Waiting for the transaction to be mined
+            const receipt = await tx.wait();
+            // The transaction is now on chain!
+            console.log(`Mined in block ${receipt.blockNumber}`);
+        });
+    </script>
+</body>
+</html>
